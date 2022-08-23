@@ -11,7 +11,7 @@ integrated into Synology NAS UI. It largely refers to
 ```
 sudo python3 -m ensurepip
 sudo python3 -m pip install --upgrade pip
-sudo python3 -m pip install -r requirements.txt
+sudo python5 -m pip install pip install git+https://github.com/butlerx/SynologyCloudflareDDNS.git#egg=synology_cloudflare_ddns
 ```
 
 4.  Download the CloudFlareDDNS script from this repository.

@@ -1,8 +1,10 @@
 """update records"""
-from structlog import get_logger
 
 from CloudFlare import CloudFlare
 from CloudFlare.exceptions import CloudFlareAPIError
+from structlog import get_logger
+
+logger = get_logger("dns.update")
 
 
 def update_record(
@@ -14,7 +16,6 @@ def update_record(
     ip_address: str,
 ):
     """Yes, we need to update this record - we know it's the same address type"""
-    logger = get_logger("update_record")
 
     dns_record = {
         "name": dns_name,

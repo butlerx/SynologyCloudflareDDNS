@@ -12,12 +12,12 @@ def get_args():
     parser.add_argument(
         "email", action="store", type=str, help="account login for cloudflare"
     )
-    parser.add_argument("api_key", action="store", type=str, help="cloudflare api key")
+    parser.add_argument("api-key", action="store", type=str, help="cloudflare api key")
     parser.add_argument(
         "hostname", action="store", type=str, help="domain name to update"
     )
     parser.add_argument(
-        "ip_address",
+        "ip-address",
         action="store",
         type=str,
         help="current IP address to set domain to",

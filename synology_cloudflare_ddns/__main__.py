@@ -4,25 +4,21 @@ This code is largely from
 https://raw.githubusercontent.com/cloudflare/python-cloudflare/master/examples/example_update_dynamic_dns.py
 """
 
+from CloudFlare import CloudFlare
 from structlog import get_logger
 
-from CloudFlare import CloudFlare
-
-from .dns import add_record, get_dns_records, get_zones, update_record
+from . import dns
 from .utils import get_args, setup_logger
+
+logger = get_logger("synology_cloudflare_ddns")
 
 
 def main(email: str, api_key: str, dns_name: str, ip_address: str):
     """main function"""
-    logger = get_logger("main")
-    _, zone_name = dns_name.split(".", 1)
-    if "." not in zone_name:
-        zone_name = dns_name
+    zone_name = dns.parse_zone_name(dns_name)
     ip_address_type = "AAAA" if ":" in ip_address else "A"
-
     cloudflare = CloudFlare(email=email, token=api_key)
-
-    zones = get_zones(cloudflare, zone_name)
+    zones = dns.get_zones(cloudflare, zone_name)
 
     if not zones:
         logger.info("no zone specified", zones=zones, zone_name=zone_name)
@@ -37,27 +33,26 @@ def main(email: str, api_key: str, dns_name: str, ip_address: str):
         )
         return 2
 
-    dns_records = get_dns_records(cloudflare, zones[0]["id"], dns_name, ip_address_type)
+    dns_records = dns.get_dns_records(
+        cloudflare, zones[0]["id"], dns_name, ip_address_type
+    )
     if not dns_records:
         return 2
 
-    zone_id: str = zones[0]["id"]
-    dns_name: str = zones[0]["name"]
+    zone_id = zones[0]["id"]
+    dns_name = zones[0]["name"]
     updated = False
     unchanged = True
 
     # update the record - unless it's already correct
     for dns_record in dns_records:
-        old_ip_address = dns_record["content"]
-        old_ip_address_type = dns_record["type"]
-
-        if ip_address_type != old_ip_address_type:
+        if ip_address_type != dns_record["type"]:
             continue
 
-        if ip_address == old_ip_address:
+        if ip_address == dns_record["content"]:
             updated = True
             continue
-        update_record(
+        dns.update_record(
             cloudflare, zone_id, dns_record["id"], dns_name, ip_address_type, ip_address
         )
         unchanged = False
@@ -73,7 +68,7 @@ def main(email: str, api_key: str, dns_name: str, ip_address: str):
             )
         return 0
 
-    add_record(cloudflare, zone_id, dns_name, ip_address_type, ip_address)
+    dns.add_record(cloudflare, zone_id, dns_name, ip_address_type, ip_address)
     return 0
 
 
