@@ -13,11 +13,11 @@ from .utils import get_args, setup_logger
 logger = get_logger("synology_cloudflare_ddns")
 
 
-def update_records(email: str, api_key: str, dns_name: str, ip_address: str):
+def update_records(api_key: str, dns_name: str, ip_address: str):
     """main function"""
     zone_name = dns.parse_zone_name(dns_name)
     ip_address_type = "AAAA" if ":" in ip_address else "A"
-    cloudflare = CloudFlare(email=email, token=api_key)
+    cloudflare = CloudFlare(token=api_key)
     zones = dns.get_zones(cloudflare, zone_name)
 
     if not zones:
@@ -74,8 +74,8 @@ def update_records(email: str, api_key: str, dns_name: str, ip_address: str):
 
 def main():
     setup_logger()
-    ARGS = get_args()
-    exit(update_records(ARGS.email, ARGS.api_key, ARGS.hostname, ARGS.ip_address))
+    args = get_args()
+    exit(update_records(args.api_key, args.hostname, args.ip_address))
 
 
 if __name__ == "__main__":

@@ -11,12 +11,12 @@ integrated into Synology NAS UI. It largely refers to
 ```
 sudo python3 -m ensurepip
 sudo python3 -m pip install --upgrade pip
-sudo python3 -m pip install git+https://github.com/butlerx/SynologyCloudflareDDNS.git#egg=synology_cloudflare_ddns
+sudo python3 -m pip install "git+https://github.com/butlerx/SynologyCloudflareDDNS.git#egg=synology_cloudflare_ddns"
 ```
 
 5.  (optional) You can firstly test the script's functionality. Running this
     script without any arguments gives the usage, like
-    `python3 -m synology_cloudflare_ddns <username> <api_key> <hostname> <ip_address>`
+    `sudo python3 -m synology_cloudflare_ddns <username> <api_key> <hostname> <ip_address>`
     `username` is your CloudFlare username, usually the email address you
     registered in CloudFlare. `api_key` is your personal CloudFlare API key. See
     [here](https://support.cloudflare.com/hc/en-us/articles/200167836-Where-do-I-find-my-Cloudflare-API-key-)
@@ -26,7 +26,7 @@ sudo python3 -m pip install git+https://github.com/butlerx/SynologyCloudflareDDN
 
 ```
 [Cloudflare]
-        modulepath=/usr/local/bin/cloudflareDDNS.py
+        modulepath=/bin/synology_cloudflare_ddns
         queryurl=https://www.cloudflare.com/
 ```
 

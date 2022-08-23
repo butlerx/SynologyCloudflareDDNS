@@ -6,20 +6,12 @@ from argparse import ArgumentParser
 def get_args():
     """get command line args"""
     parser = ArgumentParser(
-        prog="cloudflareDDNS",
-        description="automatically update cloudflare dns on ip change",
+        description="automatically update cloudflare dns on ip change"
     )
+    parser.add_argument("email", type=str, help="This is not used.")
+    parser.add_argument("api_key", type=str, help="cloudflare api key")
+    parser.add_argument("hostname", type=str, help="domain name to update")
     parser.add_argument(
-        "email", action="store", type=str, help="account login for cloudflare"
-    )
-    parser.add_argument("api-key", action="store", type=str, help="cloudflare api key")
-    parser.add_argument(
-        "hostname", action="store", type=str, help="domain name to update"
-    )
-    parser.add_argument(
-        "ip-address",
-        action="store",
-        type=str,
-        help="current IP address to set domain to",
+        "ip_address", type=str, help="current IP address to set domain to"
     )
     return parser.parse_args()
