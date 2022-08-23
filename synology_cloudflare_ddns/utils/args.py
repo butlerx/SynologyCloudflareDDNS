@@ -14,4 +14,5 @@ def get_args():
     parser.add_argument(
         "ip_address", type=str, help="current IP address to set domain to"
     )
+    parser.add_argument("--log-level", default="ERROR", help="logging level")
     return parser.parse_args()

@@ -4,6 +4,8 @@ This code is largely from
 https://raw.githubusercontent.com/cloudflare/python-cloudflare/master/examples/example_update_dynamic_dns.py
 """
 
+import logging
+
 from CloudFlare import CloudFlare
 from structlog import get_logger
 
@@ -33,9 +35,7 @@ def update_records(api_key: str, dns_name: str, ip_address: str):
         )
         return 2
 
-    dns_records = dns.get_dns_records(
-        cloudflare, zones[0]["id"], dns_name, ip_address_type
-    )
+    dns_records = dns.get_dns_records(cloudflare, zones[0]["id"], ip_address_type)
     if not dns_records:
         return 2
 
@@ -53,7 +53,12 @@ def update_records(api_key: str, dns_name: str, ip_address: str):
             updated = True
             continue
         dns.update_record(
-            cloudflare, zone_id, dns_record["id"], dns_name, ip_address_type, ip_address
+            cloudflare,
+            zone_id,
+            dns_record["id"],
+            dns_record["name"],
+            ip_address_type,
+            ip_address,
         )
         unchanged = False
         updated = True
@@ -73,8 +78,8 @@ def update_records(api_key: str, dns_name: str, ip_address: str):
 
 
 def main():
-    setup_logger()
     args = get_args()
+    setup_logger(getattr(logging, args.log_level))
     exit(update_records(args.api_key, args.hostname, args.ip_address))
 
 
