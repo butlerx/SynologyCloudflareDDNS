@@ -45,4 +45,9 @@ setup(
     long_description_content_type="text/markdown",
     install_requires=parse_requirements("requirements.txt"),
     packages=find_packages(),
+    entry_points={
+        "console_scripts": [
+            "synology_cloudflare_ddns=synology_cloudflare_ddns.__main__:main"
+        ]
+    },
 )
