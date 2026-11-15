@@ -1,6 +1,6 @@
 [project]
 name            = "synology-cloudflare-ddns"
-version         = "0.1.0"
+version         = "0.2.0"
 description     = "A simple script to update CloudFlare DDNS for Synology NAS."
 authors         = [{ name = "Cian Butler", email = "butlerx@notthe.cloud" }]
 readme          = "README.md"
