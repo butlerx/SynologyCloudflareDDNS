@@ -1,4 +1,4 @@
-"""add records"""
+"""Create DNS records."""
 
 from CloudFlare import CloudFlare
 from CloudFlare.exceptions import CloudFlareAPIError
@@ -15,7 +15,8 @@ def add_record(cf: CloudFlare, zone_id: str, dns_name: str, ip_address_type: str
     try:
         cf.zones.dns_records.post(zone_id, data=dns_record)
     except CloudFlareAPIError as err:
-        logger.error(
+        # TRY400: API failures are expected here, so log the error without a traceback.
+        logger.error(  # noqa: TRY400
             "failed to create dns entry",
             extra={**log_fields, "method": "zones.dns_records.post", "err": err},
         )

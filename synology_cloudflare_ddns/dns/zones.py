@@ -1,27 +1,34 @@
-"""zone functions"""
+"""Look up Cloudflare zones."""
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 from CloudFlare.exceptions import CloudFlareAPIError
 
 from synology_cloudflare_ddns.utils.logger import get_logger
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from CloudFlare import CloudFlare
 
 logger = get_logger("dns.zones")
 
 
 def get_zones(cf: CloudFlare, zone_name: str) -> list[dict[str, str]] | None:
-    """Look up zones by exact name. Returns None if the API call failed."""
+    """Look up zones by exact name, or return None if the API call failed."""
     try:
         return cf.zones.get(params={"name": zone_name})
     except CloudFlareAPIError as err:
-        logger.error("api call failed", extra={"method": "zones.get", "zone_name": zone_name, "err": err})
-    except Exception as err:
-        logger.error("api call failed", extra={"method": "zones.get", "zone_name": zone_name, "err": err})
+        # TRY400: API failures are expected here, so log the error without a traceback.
+        logger.error(  # noqa: TRY400
+            "api call failed", extra={"method": "zones.get", "zone_name": zone_name, "err": err}
+        )
+    except Exception as err:  # noqa: BLE001 - any failure talking to the API is logged and treated as no zones
+        logger.error(  # noqa: TRY400
+            "api call failed", extra={"method": "zones.get", "zone_name": zone_name, "err": err}
+        )
     return None
 
 
@@ -39,7 +46,7 @@ def zone_candidates(dns_name: str) -> Iterator[str]:
 
 
 def find_zone(cf: CloudFlare, dns_name: str) -> dict[str, str] | None:
-    """Find the Cloudflare zone that contains dns_name, or None."""
+    """Find the Cloudflare zone that contains dns_name, or return None."""
     for candidate in zone_candidates(dns_name):
         zones = get_zones(cf, candidate)
         if zones is None:

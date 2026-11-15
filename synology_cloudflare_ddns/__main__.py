@@ -1,10 +1,12 @@
-#!/usr/bin/env python3
 """
+Update Cloudflare DNS records to the current IP address.
+
 This code is largely from
 https://raw.githubusercontent.com/cloudflare/python-cloudflare/master/examples/example_update_dynamic_dns.py
 """
 
 import logging
+import sys
 
 from CloudFlare import CloudFlare
 
@@ -45,10 +47,11 @@ def update_records(api_key: str, dns_name: str, ip_address: str) -> int:
     return 0 if ok else 2
 
 
-def main():
+def main() -> None:
+    """Parse the command line and run the DNS update."""
     args = get_args()
     setup_logger(getattr(logging, args.log_level), log_format=args.log_format)
-    exit(update_records(args.api_key, args.hostname, args.ip_address))
+    sys.exit(update_records(args.api_key, args.hostname, args.ip_address))
 
 
 if __name__ == "__main__":

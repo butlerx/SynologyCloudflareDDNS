@@ -1,4 +1,4 @@
-"""update records"""
+"""Update DNS records."""
 
 from __future__ import annotations
 
@@ -39,7 +39,8 @@ def update_record(cf: CloudFlare, zone_id: str, existing: dict[str, Any], ip_add
     try:
         cf.zones.dns_records.put(zone_id, existing["id"], data=dns_record)
     except CloudFlareAPIError as err:
-        logger.error(
+        # TRY400: API failures are expected here, so log the error without a traceback.
+        logger.error(  # noqa: TRY400
             "failed to update dns record",
             extra={**log_fields, "method": "zones.dns_records.put", "err": err},
         )

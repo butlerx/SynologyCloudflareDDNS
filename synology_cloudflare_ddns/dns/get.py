@@ -1,4 +1,4 @@
-"""lib for getting dns records"""
+"""Look up DNS records."""
 
 from __future__ import annotations
 
@@ -17,13 +17,14 @@ logger = get_logger("dns.get")
 def get_dns_records(
     cf: CloudFlare, zone_id: str, dns_name: str, ip_address_type: str
 ) -> list[dict[str, Any]] | None:
-    """Get the records of one type for one hostname. Returns None if the API call failed."""
+    """Fetch the records of one type for one hostname, or None if the API call failed."""
     try:
         return cf.zones.dns_records.get(
             zone_id, params={"match": "all", "name": dns_name, "type": ip_address_type}
         )
     except CloudFlareAPIError as err:
-        logger.error(
+        # TRY400: API failures are expected here, so log the error without a traceback.
+        logger.error(  # noqa: TRY400
             "api call failed",
             extra={
                 "err": err,

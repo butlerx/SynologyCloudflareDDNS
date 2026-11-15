@@ -6,11 +6,7 @@ authors         = [{ name = "Cian Butler", email = "butlerx@notthe.cloud" }]
 readme          = "README.md"
 license         = { file = "LICENSE" }
 requires-python = ">=3.8"
-dependencies    = [
-  "cloudflare == 2.19.*",
-  "orjson",
-  "python-json-logger >= 4.0.0"
-]
+dependencies    = ["cloudflare == 2.19.*", "orjson", "python-json-logger >= 4.0.0"]
 classifiers     = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
@@ -50,40 +46,10 @@ ignore = [
   "D212",         # conflicts with D213
   "FIX002",       # TODOs are allowed
   "TD003",        # TODOs don't need issue links
-  # TODO: burn down. Pre-existing violations; delete each rule once the code is fixed.
-  "ANN001",       # missing type annotation on function argument
-  "ANN201",       # missing return type on public function
-  "ANN204",       # missing return type on special method
-  "ANN401",       # Any-typed argument
-  "BLE001",       # blind except
-  "D100",         # missing module docstring
-  "D102",         # missing method docstring
-  "D103",         # missing function docstring
-  "D104",         # missing package docstring
-  "D107",         # missing __init__ docstring
-  "D205",         # blank line after summary
-  "D400",         # docstring summary missing period
-  "D401",         # docstring not imperative
-  "D404",         # docstring starts with "This"
-  "D415",         # docstring summary missing terminal punctuation
-  "E501",         # line too long (args.py help text)
-  "EXE001",       # shebang in non-executable __main__.py
-  "FA100",        # typing.List/Dict instead of builtins
-  "PLR0913",      # too many arguments (update_record)
-  "PLR0917",      # too many positional arguments (update_record)
-  "PLR1722",      # exit() instead of sys.exit()
-  "TRY400",       # logging.error instead of logging.exception
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**"                                   = [
-  "D103",
-  "INP001",
-  "PLR2004",
-  "S101"
-]
-# TODO: burn down. Re-exports need an __all__ instead of this ignore.
-"synology_cloudflare_ddns/utils/__init__.py" = ["F401"]
+"tests/**" = ["D103", "INP001", "PLR2004", "S101"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
