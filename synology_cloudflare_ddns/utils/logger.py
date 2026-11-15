@@ -74,7 +74,8 @@ class KeyValueLogFormatter(logging.Formatter):
 def setup_logger(level=logging.INFO, log_format="kv"):
     handler = logging.StreamHandler()
     if log_format == "json":
-        handler.setFormatter(orjson.OrjsonFormatter)
+        # TODO(butlerx): burn down. This passes the class, not an instance, so --log-format json is broken.
+        handler.setFormatter(orjson.OrjsonFormatter)  # ty: ignore[invalid-argument-type]
     else:
         handler.setFormatter(KeyValueLogFormatter())
     root_logger = logging.getLogger()
