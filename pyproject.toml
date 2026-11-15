@@ -5,12 +5,16 @@ description     = "A simple script to update CloudFlare DDNS for Synology NAS."
 authors         = [{ name = "Cian Butler", email = "butlerx@notthe.cloud" }]
 readme          = "README.md"
 license         = { file = "LICENSE" }
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dependencies    = ["cloudflare == 2.19.*", "orjson", "python-json-logger >= 4.0.0"]
 classifiers     = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 
 [project.urls]
@@ -27,7 +31,7 @@ dev    = [
   { include-group = "typing" },
 ]
 lint   = ["ruff"]
-test   = ["pytest"]
+test   = ["pytest>=9.0.3"]
 typing = ["ty"]
 
 [build-system]

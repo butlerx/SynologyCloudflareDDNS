@@ -33,11 +33,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 3.8 is the floor from requires-python.
+        # Every supported (non-EOL) CPython; 3.11 is the floor from requires-python.
         python-version:
-          - '3.8'
+          - '3.11'
           - '3.12'
           - '3.13'
+          - '3.14'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

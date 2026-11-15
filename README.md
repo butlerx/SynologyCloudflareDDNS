@@ -4,7 +4,8 @@ integrated into Synology NAS UI. It largely refers to
 
 # Installation
 
-1.  Install python3 from synology package using the NAS web interface.
+1.  Install Python 3.11 or newer from the Synology Package Center using the NAS
+    web interface.
 2.  Enable the SSH connection and ssh into your NAS
 3.  Install pip for python3, then get python-cloudflare
 
