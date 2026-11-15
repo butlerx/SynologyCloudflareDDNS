@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from CloudFlare.exceptions import CloudFlareAPIError
 
@@ -14,17 +14,24 @@ if TYPE_CHECKING:
 logger = get_logger("dns.get")
 
 
-def get_dns_records(cf: CloudFlare, zone_id: str, ip_address_type: str) -> list[dict[str, str]]:
-    """Fetch the DNS records of one address type for a zone."""
+def get_dns_records(
+    cf: CloudFlare, zone_id: str, dns_name: str, ip_address_type: str
+) -> list[dict[str, Any]] | None:
+    """Fetch the records of one type for one hostname, or None if the API call failed."""
     try:
-        return cf.zones.dns_records.get(zone_id, params={"match": "all", "type": ip_address_type})
+        return cf.zones.dns_records.get(
+            zone_id, params={"match": "all", "name": dns_name, "type": ip_address_type}
+        )
     except CloudFlareAPIError as err:
         # TRY400: API failures are expected here, so log the error without a traceback.
         logger.error(  # noqa: TRY400
             "api call failed",
-            err=err,
-            method="zones.dns_records",
-            ip_address_type=ip_address_type,
-            zone_id=zone_id,
+            extra={
+                "err": err,
+                "method": "zones.dns_records.get",
+                "dns_name": dns_name,
+                "ip_address_type": ip_address_type,
+                "zone_id": zone_id,
+            },
         )
-        return []
+        return None

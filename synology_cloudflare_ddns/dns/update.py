@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from CloudFlare.exceptions import CloudFlareAPIError
 
@@ -14,31 +14,36 @@ if TYPE_CHECKING:
 logger = get_logger("dns.update")
 
 
-def update_record(
-    cf: CloudFlare,
-    zone_id: str,
-    dns_record: dict[str, str],
-    ip_address_type: str,
-    ip_address: str,
-) -> None:
-    """Point an existing DNS record at a new address of the same type."""
-    dns_record_id = dns_record["id"]
-    payload = {
-        "name": dns_record["name"],
-        "type": ip_address_type,
+def update_record(cf: CloudFlare, zone_id: str, existing: dict[str, Any], ip_address: str) -> bool:
+    """
+    Point an existing record at a new address. Returns True on success.
+
+    Proxy and TTL settings are carried over from the existing record so an
+    address change never flips a record between proxied and DNS-only.
+    """
+    dns_record = {
+        "name": existing["name"],
+        "type": existing["type"],
         "content": ip_address,
-        "proxied": True,
+        "proxied": existing.get("proxied", False),
+        "ttl": existing.get("ttl", 1),
+    }
+    log_fields = {
+        "dns_name": existing["name"],
+        "type": existing["type"],
+        "content": ip_address,
+        "proxied": dns_record["proxied"],
+        "zone_id": zone_id,
+        "dns_record_id": existing["id"],
     }
     try:
-        cf.zones.dns_records.put(zone_id, dns_record_id, data=payload)
+        cf.zones.dns_records.put(zone_id, existing["id"], data=dns_record)
     except CloudFlareAPIError as err:
         # TRY400: API failures are expected here, so log the error without a traceback.
         logger.error(  # noqa: TRY400
-            "failed to update api",
-            **payload,
-            err=err,
-            zone_id=zone_id,
-            dns_record_id=dns_record_id,
-            method="zones.dns_records.put",
+            "failed to update dns record",
+            extra={**log_fields, "method": "zones.dns_records.put", "err": err},
         )
-    logger.info("DNS record updated", **payload)
+        return False
+    logger.info("DNS record updated", extra=log_fields)
+    return True

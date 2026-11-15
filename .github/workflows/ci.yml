@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - master
+  # No branch filter: stacked PRs (e.g. #3 on #2) target a non-default base and still need CI.
   pull_request:
-    branches:
-      - master
 
 permissions:
   contents: read
