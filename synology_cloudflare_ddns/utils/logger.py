@@ -8,27 +8,9 @@ from pythonjsonlogger import orjson
 if TYPE_CHECKING:
     from typing import Any
 
-RESERVED_LOG_FIELDS = {
-    "name",
-    "msg",
-    "args",
-    "levelname",
-    "levelno",
-    "pathname",
-    "filename",
-    "module",
-    "exc_info",
-    "exc_text",
-    "stack_info",
-    "lineno",
-    "funcName",
-    "created",
-    "msecs",
-    "relativeCreated",
-    "thread",
-    "threadName",
-    "processName",
-    "process",
+# Every attribute a bare LogRecord carries, so only fields passed via `extra=` are printed.
+RESERVED_LOG_FIELDS = frozenset(logging.LogRecord("", 0, "", 0, "", (), None).__dict__) | {
+    "message",
     "asctime",
 }
 
@@ -66,7 +48,7 @@ class KeyValueLogFormatter(logging.Formatter):
     def _format_value(self, value: Any) -> str:
         value_str = str(value)
         if " " in value_str or "=" in value_str or '"' in value_str:
-            clean_str = value_str.replace('"', '"')
+            clean_str = value_str.replace("\\", "\\\\").replace('"', '\\"')
             return f'"{clean_str}"'
         return value_str
 
@@ -74,8 +56,7 @@ class KeyValueLogFormatter(logging.Formatter):
 def setup_logger(level=logging.INFO, log_format="kv"):
     handler = logging.StreamHandler()
     if log_format == "json":
-        # TODO(butlerx): burn down. This passes the class, not an instance, so --log-format json is broken.
-        handler.setFormatter(orjson.OrjsonFormatter)  # ty: ignore[invalid-argument-type]
+        handler.setFormatter(orjson.OrjsonFormatter("%(asctime)s %(levelname)s %(name)s %(message)s"))
     else:
         handler.setFormatter(KeyValueLogFormatter())
     root_logger = logging.getLogger()
