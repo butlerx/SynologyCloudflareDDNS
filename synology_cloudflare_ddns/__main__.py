@@ -1,10 +1,12 @@
-#!/usr/bin/env python3
 """
+Update Cloudflare DNS records to the current IP address.
+
 This code is largely from
 https://raw.githubusercontent.com/cloudflare/python-cloudflare/master/examples/example_update_dynamic_dns.py
 """
 
 import logging
+import sys
 
 from CloudFlare import CloudFlare
 
@@ -16,8 +18,8 @@ from .utils import get_args, setup_logger
 logger = get_logger("synology_cloudflare_ddns")
 
 
-def update_records(api_key: str, dns_name: str, ip_address: str):
-    """Main function"""
+def update_records(api_key: str, dns_name: str, ip_address: str) -> int:
+    """Point the DNS records for dns_name at ip_address and return an exit code."""
     zone_name = dns.parse_zone_name(dns_name)
     ip_address_type = "AAAA" if ":" in ip_address else "A"
     cloudflare = CloudFlare(token=api_key)
@@ -53,14 +55,7 @@ def update_records(api_key: str, dns_name: str, ip_address: str):
         if ip_address == dns_record["content"]:
             updated = True
             continue
-        dns.update_record(
-            cloudflare,
-            zone_id,
-            dns_record["id"],
-            dns_record["name"],
-            ip_address_type,
-            ip_address,
-        )
+        dns.update_record(cloudflare, zone_id, dns_record, ip_address_type, ip_address)
         unchanged = False
         updated = True
 
@@ -68,7 +63,7 @@ def update_records(api_key: str, dns_name: str, ip_address: str):
         if unchanged:
             logger.info(
                 "No Change required",
-                name=dns_name,
+                dns_name=dns_name,
                 type=ip_address_type,
                 address=ip_address,
             )
@@ -78,10 +73,11 @@ def update_records(api_key: str, dns_name: str, ip_address: str):
     return 0
 
 
-def main():
+def main() -> None:
+    """Parse the command line and run the DNS update."""
     args = get_args()
     setup_logger(getattr(logging, args.log_level), log_format=args.log_format)
-    exit(update_records(args.api_key, args.hostname, args.ip_address))
+    sys.exit(update_records(args.api_key, args.hostname, args.ip_address))
 
 
 if __name__ == "__main__":

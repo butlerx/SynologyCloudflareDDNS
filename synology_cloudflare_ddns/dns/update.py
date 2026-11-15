@@ -1,9 +1,15 @@
-"""update records"""
+"""Update DNS records."""
 
-from CloudFlare import CloudFlare
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from CloudFlare.exceptions import CloudFlareAPIError
 
 from synology_cloudflare_ddns.utils.logger import get_logger
+
+if TYPE_CHECKING:
+    from CloudFlare import CloudFlare
 
 logger = get_logger("dns.update")
 
@@ -11,27 +17,28 @@ logger = get_logger("dns.update")
 def update_record(
     cf: CloudFlare,
     zone_id: str,
-    dns_record_id: str,
-    dns_name: str,
+    dns_record: dict[str, str],
     ip_address_type: str,
     ip_address: str,
-):
-    """Yes, we need to update this record - we know it's the same address type"""
-    dns_record = {
-        "name": dns_name,
+) -> None:
+    """Point an existing DNS record at a new address of the same type."""
+    dns_record_id = dns_record["id"]
+    payload = {
+        "name": dns_record["name"],
         "type": ip_address_type,
         "content": ip_address,
         "proxied": True,
     }
     try:
-        cf.zones.dns_records.put(zone_id, dns_record_id, data=dns_record)
+        cf.zones.dns_records.put(zone_id, dns_record_id, data=payload)
     except CloudFlareAPIError as err:
-        logger.error(
+        # TRY400: API failures are expected here, so log the error without a traceback.
+        logger.error(  # noqa: TRY400
             "failed to update api",
-            **dns_record,
+            **payload,
             err=err,
             zone_id=zone_id,
             dns_record_id=dns_record_id,
             method="zones.dns_records.put",
         )
-    logger.info("DNS record updated", **dns_record)
+    logger.info("DNS record updated", **payload)
