@@ -2,6 +2,7 @@
 
 from CloudFlare import CloudFlare
 from CloudFlare.exceptions import CloudFlareAPIError
+
 from synology_cloudflare_ddns.utils.logger import get_logger
 
 logger = get_logger("dns.update")
@@ -16,7 +17,6 @@ def update_record(
     ip_address: str,
 ):
     """Yes, we need to update this record - we know it's the same address type"""
-
     dns_record = {
         "name": dns_name,
         "type": ip_address_type,

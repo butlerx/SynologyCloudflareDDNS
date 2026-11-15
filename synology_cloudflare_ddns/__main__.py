@@ -7,6 +7,7 @@ https://raw.githubusercontent.com/cloudflare/python-cloudflare/master/examples/e
 import logging
 
 from CloudFlare import CloudFlare
+
 from synology_cloudflare_ddns.utils.logger import get_logger
 
 from . import dns
@@ -16,7 +17,7 @@ logger = get_logger("synology_cloudflare_ddns")
 
 
 def update_records(api_key: str, dns_name: str, ip_address: str):
-    """main function"""
+    """Main function"""
     zone_name = dns.parse_zone_name(dns_name)
     ip_address_type = "AAAA" if ":" in ip_address else "A"
     cloudflare = CloudFlare(token=api_key)
