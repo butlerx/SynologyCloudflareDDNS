@@ -1,23 +1,22 @@
-"""cli args"""
+"""Command line arguments."""
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 
-def get_args():
-    """get command line args"""
-    parser = ArgumentParser(
-        description="automatically update cloudflare dns on ip change"
-    )
+def get_args() -> Namespace:
+    """Parse the command line arguments."""
+    parser = ArgumentParser(description="automatically update cloudflare dns on ip change")
     parser.add_argument("email", type=str, help="This is not used.")
     parser.add_argument(
         "api_key",
         type=str,
-        help="Cloudflare API key. Find it in your Cloudflare dashboard under 'My Profile' > 'API Tokens'. See: https://support.cloudflare.com/hc/en-us/articles/200167836-Where-do-I-find-my-Cloudflare-API-key-",
+        help=(
+            "Cloudflare API key. Find it in your Cloudflare dashboard under 'My Profile' > 'API Tokens'. "
+            "See: https://support.cloudflare.com/hc/en-us/articles/200167836-Where-do-I-find-my-Cloudflare-API-key-"
+        ),
     )
     parser.add_argument("hostname", type=str, help="domain name to update")
-    parser.add_argument(
-        "ip_address", type=str, help="current IP address to set domain to"
-    )
+    parser.add_argument("ip_address", type=str, help="current IP address to set domain to")
     parser.add_argument("--log-level", default="ERROR", help="logging level")
     parser.add_argument(
         "--log-format",
