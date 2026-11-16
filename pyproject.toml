@@ -6,7 +6,7 @@ authors         = [{ name = "Cian Butler", email = "butlerx@notthe.cloud" }]
 readme          = "README.md"
 license         = { file = "LICENSE" }
 requires-python = ">=3.11"
-dependencies    = ["cloudflare == 2.19.*", "orjson", "python-json-logger >= 4.0.0"]
+dependencies    = ["cloudflare>=2.19,<5.11", "orjson", "python-json-logger >= 4.0.0"]
 classifiers     = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
